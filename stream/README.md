@@ -1,23 +1,15 @@
-# Stream Introduction
+# 图书管理数据库项目
 
-`stream` is obviously the core abstract model to deal with the sequence data. 
+## 项目简介
 
-Whatever a list or an alphabetic string we can unify to the *sequence data* model. 
+这是一个简单的图书管理数据库项目——我们需要实现一个集前后端于一体的 `C++` 程序，让它能够支持对图书借阅事务的记录与处理。
+
+图书馆的借阅系统需要支持如下几种功能：
+
+- 记录所有的读者相关信息，包括读者的姓名，唯一身份 ID （学号）, 年龄等相关的基本信息。
+- 记录所有的图书借取记录，并支持对图书借取记录的查询。
+- 支持新建读者信息，插入借阅记录。
+- 支持对借阅记录进行查询。
 
 ---
 
-Let's shoot a quickly glance at this point. 
-
-Firstly, we consider to realize a log system. We should use it to parse our different type data to a string. And it would help us to do more things well, especially when we need to debug our program. 
-
-The first scenario we meet is a simple student management system: you need to print out the all students information! 
-A student would contains some infomation: 
-- name 
-- unique identity code 
-- borrowed book list 
-- graduate information: the graduated year 
-
-For example: 
-{name: Cutie Deng, identity-code: 314159265, borrowed-books: (None), graduated-year: 2077} 
-
-Let's have a try! 
