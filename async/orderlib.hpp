@@ -19,16 +19,15 @@ namespace StoneSpace {
         std::mutex mutex; 
 
         private: 
-        Stone(u32 val = 0, std::string name = ""): prior(val), name(std::move(name)) {} 
 
         friend bool swap(Stone&, Stone&); 
 
         public: 
-        Stone &operator=(Stone const&) = delete; 
-        Stone(Stone const& ) = delete; 
+        Stone(u32 val = 0, std::string name = ""): prior(val), name(std::move(name)) {} 
 
         template <u32 size> 
-        static std::array<Stone, size> randomly_construct();
+        static std::unique_ptr<std::array<Stone, size>> randomly_construct(); 
+        // static std::array<Stone, size> randomly_construct();
 
         u32 get_prior() {return prior; }
         std::string_view get_name() {return name; }
@@ -43,7 +42,8 @@ namespace StoneSpace {
 
     bool swap(Stone &a, Stone &b) {
         using namespace std::literals::chrono_literals; 
-
+        if (!TimeCnt::record_timeing)
+            throw IllegalGameException("Haven't started the game! ");
         if (&a == &b) 
             return false; 
         std::lock(a.mutex, b.mutex); 
@@ -57,10 +57,10 @@ namespace StoneSpace {
     }
 
     template <u32 size> 
-    std::array<Stone, size> Stone::randomly_construct() {
+    std::unique_ptr<std::array<Stone, size>> Stone::randomly_construct() {
         constexpr u32 MOD = 65535; 
-        std::array<Stone, size> result; 
-        for (auto &s: result) {
+        std::unique_ptr<std::array<Stone, size>> result = std::make_unique<std::array<Stone, size>> (); 
+        for (auto &s: *result) {
             s.prior = rand() % MOD; 
         }
         return result; 
@@ -70,7 +70,7 @@ namespace StoneSpace {
     bool test (T &array) {
 
         u32 tmp = 0; 
-        for (auto &p: array) {
+        for (auto &p: *array) {
             if (p.get_prior() < tmp) 
                 return false; 
             tmp = p.get_prior(); 
@@ -97,6 +97,7 @@ namespace StoneSpace {
     }
 
     void start() {
+        srand(time(NULL));
         using namespace TimeCnt;
         std::lock_guard c_(clock_lock); 
         if (!record_timeing) {
