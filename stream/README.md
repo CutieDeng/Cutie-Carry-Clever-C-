@@ -13,3 +13,10 @@
 
 ---
 
+|demo |table|
+|---|----|
+| Some student A | None |
+| Some student B | A normal record. |
+
+
+
