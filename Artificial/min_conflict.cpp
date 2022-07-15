@@ -1,5 +1,7 @@
 #include <chrono> 
 #include <cstdint> 
+#include <cstring> 
+#include <compare>
 #include <ctime> 
 #include <exception> 
 #include <iostream> 
@@ -67,6 +69,12 @@ void set_n(char const *arg1) {
 //      程序传入参数错误时退出，其错误码为 1. 
         _Exit(1); 
     }
+//  除此之处，n = 2 / 3 时程序无解
+    if (n == 2 || n == 3) {
+        std::cerr << "\e[1;31mn = " << n << " 时程序无解。\e[0m"; 
+        endl(std::cerr); 
+        _Exit(23); 
+    }
 }
 
 // 变长数组
@@ -118,7 +126,7 @@ void add_pos(i32 x, i32 y, vector<i32> &cache) {
 }
 
 // 输出声明，用于输出棋盘的解
-template <bool > void output(vector<i32> const &); 
+template <bool = true> void output(vector<i32> const &); 
 
 // 标准的矛盾量计算函数
 i32 get_conflict(vector<i32> const &solution, vector<i32> &cache) {
@@ -332,7 +340,7 @@ auto find_result() -> vector<i32> {
     return solution; 
 }
 
-template <bool colored = true>
+template <bool colored>
 void output(vector<i32> const &solution) {
     assert (solution.size() == n); 
     for (size_t line = 0; line < n; ++line) {
