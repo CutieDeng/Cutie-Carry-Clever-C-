@@ -32,8 +32,9 @@ export namespace game::graph {
         private: 
             // The specific graph node info in the graph. 
             size_type width_, height_;  
+            constexpr static bool is_void_type_v = same_as<value_type, void>; 
             typename conditional< 
-                same_as<value_type, void>, 
+                is_void_type_v, 
                 monostate, 
                 container_type<value_type>
             >::type nodes_; 
@@ -41,16 +42,18 @@ export namespace game::graph {
             constexpr Graph() : width_(), height_(), nodes_() {} 
             // Draw a simple graph, with the specific size. 
             constexpr Graph(size_type w, size_type h, value_type v) requires (sizeof v <= 8) : 
-                width_(w), height_(h), 
-                nodes_(w * h, v) 
+                width_(w), height_(h)  
+                // bug operation! Why bug? 
+                // ,nodes_(w * h, v) 
             {
-                // simple test. 
-                // static_assert (!is_same<value_type, int>); 
+                if constexpr (!is_void_type_v) {
+                    nodes_ = container_type<value_type>(w * h, v); 
+                }
             }
             constexpr bool empty() const {
                 return nodes_.empty(); 
             }
-            void display(auto &output_stream) const {
+            void debug(auto &output_stream) const {
                 unsigned w = width_, h = height_; 
                 char cache[60]; 
                 snprintf(cache, size(cache), "Graph Info: width=%u,height=%u,container.size=%zu.\n",
@@ -89,7 +92,7 @@ export namespace game::graph {
                     return nullopt; 
             }
             constexpr optional<reference_wrapper<value_type const >> at(size_type r, size_type c) const {
-                if (r < 0 || r >= height_ || c < 0 || c > width_) {
+                if (r < 0 || r >= height_ || c < 0 || c >= width_) {
                     return nullopt; 
                 }
                 return (*this)[r, c]; 

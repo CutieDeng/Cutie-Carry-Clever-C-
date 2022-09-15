@@ -4,8 +4,11 @@ import graph;
 
 int main() {
     using namespace game; 
+    // puts("-----------"); 
     graph::Graph test (3, 3, 6); 
     {
+        puts ("----------"); 
+
         auto rbounds = test.row(); 
         auto cbounds = test.col(); 
         for (decltype(rbounds) r = 0; r < rbounds; ++r) {
@@ -22,6 +25,25 @@ int main() {
                 }
             }
             putchar('\n'); 
+        }
+
+        puts ("----------"); 
+
+        bool out = true; 
+        for (int r = 0, c = 0;;) { 
+            auto &&p = test.at(r, c); 
+            if (!p) {
+                if (out) 
+                    break; 
+                ++r; c=0; out=true; 
+                putchar('\n'); 
+            } else {
+                if (!out) 
+                    putchar(' '); 
+                printf ("%d", p->get()); 
+                ++c; 
+                out = false; 
+            }
         }
     }
 }
